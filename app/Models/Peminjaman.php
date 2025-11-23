@@ -9,16 +9,24 @@ class Peminjaman extends Model
 {
     /** @use HasFactory<\Database\Factories\PeminjamanFactory> */
     use HasFactory;
-    protected $table ='peminjaman';
+    protected $table = 'peminjaman';
     protected $fillable = [
-        'user_id', 'tanggal_pinjam', 'tanggal_kembali', 'status'
+        'user_id',
+        'tanggal_pinjam',
+        'tanggal_kembali',
+        'status'
     ];
-    protected $dates = ['tanggal_pinjam', 'tanggal_kembali'];
+    protected $casts = [
+        'tanggal_pinjam' => 'datetime',
+        'tanggal_kembali' => 'datetime',
+    ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-    public function detail(){
+    public function detail()
+    {
         return $this->hasMany(PeminjamanDetail::class, 'peminjaman_id');
     }
 }
