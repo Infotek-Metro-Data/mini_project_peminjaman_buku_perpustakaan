@@ -21,7 +21,7 @@
 
                 <div>
                     <img src={{ asset('images/perpus2.jpg') }}
-                        class="rounded" alt="">
+                        class="rounded transition-transform duration-300 hover:scale-105" alt="">
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 </div>
 
                 <img src={{ asset('images/perpus.jpg') }}
-                    class="rounded" alt="">
+                    class="rounded transition-transform duration-300 hover:scale-105" alt="">
             </div>
         </div>
     </section>

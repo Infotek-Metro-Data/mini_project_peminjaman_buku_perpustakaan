@@ -109,3 +109,6 @@ Halaman anggota menampilkan:
 
 ## Note
  Buat halaman page dengan menarik, menggunakan UI/UX yang minimalis, jangan lupa agar di buat mobile friendly, Wajib menggunakan tailwind sebagai CSS, tidak boleh menggunakan boostrap
+
+admin@admin.com
+password
