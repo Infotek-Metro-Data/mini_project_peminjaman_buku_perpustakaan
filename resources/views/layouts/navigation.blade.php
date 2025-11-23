@@ -1,31 +1,67 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between h-20">
             <div class="flex">
+                {{-- Logo --}}
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2">
-                        <img src="{{ asset('images/logo.jpg') }}" alt="Logo KEVNA" class="h-20 w-20 object-contain">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Logo Perpustakaan"
+                            class="h-16 w-16 object-contain  p-1">
                     </a>
                 </div>
+
+                {{-- Navigasi Utama (Home, About, Contact) --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         {{ __('Home') }}
                     </x-nav-link>
                     <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
                         {{ __('About') }}
-                        </x-link>
-                        <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
-                            {{ __('Contact') }}
-                        </x-nav-link>
+                    </x-nav-link>
+                    <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+                        {{ __('Contact') }}
+                    </x-nav-link>
+
+                    {{-- Navigasi Dinamis Berdasarkan Role (Setelah login) --}}
+                    @auth
+                        @if (Auth::user()->role == 'admin')
+                            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                                {{ __('Manajemen User') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.kategori.index')" :active="request()->routeIs('admin.kategori.*')">
+                                {{ __('Kategori') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.buku.index')" :active="request()->routeIs('admin.buku.*')">
+                                {{ __('Buku') }}
+                            </x-nav-link>
+                        @elseif (Auth::user()->role == 'petugas')
+                            <x-nav-link :href="route('petugas.peminjaman.index')" :active="request()->routeIs('petugas.peminjaman.*')">
+                                {{ __('Transaksi Pinjam') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.buku.index')" :active="request()->routeIs('admin.buku.*')">
+                                {{ __('Manajemen Buku') }}
+                            </x-nav-link>
+                        @elseif (Auth::user()->role == 'anggota')
+                            <x-nav-link :href="route('anggota.buku.index')" :active="request()->routeIs('anggota.buku.*')">
+                                {{ __('Katalog Buku') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('anggota.peminjaman.history')" :active="request()->routeIs('anggota.peminjaman.*')">
+                                {{ __('Riwayat Peminjaman') }}
+                            </x-nav-link>
+                        @endif
+                    @endauth
                 </div>
             </div>
+
+            {{-- Dropdown Profile (Kanan) --}}
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                                <div>{{ Auth::user()->name }} ({{ ucfirst(Auth::user()->role) }})</div>
+                                {{-- Tampilkan Role --}}
                                 <div class="ml-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20">
@@ -51,13 +87,20 @@
                         </x-slot>
                     </x-dropdown>
                 @else
+                    {{-- Link Login/Register untuk tamu --}}
                     <div class="flex space-x-4">
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
                             {{ __('Login') }}
                         </x-nav-link>
+                        {{-- Registrasi hanya untuk Anggota, jadi tetap tampilkan --}}
+                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                            {{ __('Register') }}
+                        </x-nav-link>
                     </div>
                 @endauth
             </div>
+
+            {{-- Hamburger Menu (Mobile) --}}
             <div class="-mr-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
@@ -72,7 +115,10 @@
             </div>
         </div>
     </div>
+
+    {{-- Responsive Nav (Mobile Menu) --}}
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+        {{-- Menu Publik (Mobile) --}}
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
                 {{ __('Home') }}
@@ -83,14 +129,47 @@
             <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
                 {{ __('Contact') }}
             </x-responsive-nav-link>
+
+            {{-- Menu Dinamis Role (Mobile) --}}
+            @auth
+                @if (Auth::user()->role == 'admin')
+                    <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        {{ __('Manajemen User') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.kategori.index')" :active="request()->routeIs('admin.kategori.*')">
+                        {{ __('Kategori') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.buku.index')" :active="request()->routeIs('admin.buku.*')">
+                        {{ __('Buku') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('petugas.peminjaman.index')" :active="request()->routeIs('petugas.peminjaman.*')">
+                        {{ __('Laporan Peminjaman') }}
+                    </x-responsive-nav-link>
+                @elseif (Auth::user()->role == 'petugas')
+                    <x-responsive-nav-link :href="route('petugas.peminjaman.index')" :active="request()->routeIs('petugas.peminjaman.*')">
+                        {{ __('Transaksi Pinjam') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.buku.index')" :active="request()->routeIs('admin.buku.*')">
+                        {{ __('Manajemen Buku') }}
+                    </x-responsive-nav-link>
+                @elseif (Auth::user()->role == 'anggota')
+                    <x-responsive-nav-link :href="route('anggota.buku.index')" :active="request()->routeIs('anggota.buku.*')">
+                        {{ __('Katalog Buku') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('anggota.peminjaman.history')" :active="request()->routeIs('anggota.peminjaman.*')">
+                        {{ __('Riwayat Peminjaman') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
         </div>
+
+        {{-- Profile/Auth Links (Mobile) --}}
         @auth
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
-
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('dashboard')">
                         {{ __('Dashboard') }}
@@ -105,9 +184,12 @@
                 </div>
             </div>
         @else
-            <div class="pt-2 pb-3 space-y-1">
+            <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
                 <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
                     {{ __('Login') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                    {{ __('Register') }}
                 </x-responsive-nav-link>
             </div>
         @endauth
