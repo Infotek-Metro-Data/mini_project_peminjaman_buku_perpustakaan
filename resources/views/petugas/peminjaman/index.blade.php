@@ -63,7 +63,7 @@
                                     @foreach ($peminjaman->detail as $detail)
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                            📚 {{ $detail->buku->judul ?? 'Buku Terhapus' }}
+                                             {{ $detail->buku->judul ?? 'Buku Terhapus' }}
                                         </span>
                                     @endforeach
                                 </div>
